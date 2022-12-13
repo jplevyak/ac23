@@ -1,0 +1,54 @@
+#!/usr/bin/python3
+import functools
+
+S = 0
+H = [l.strip() for l in open("MSG", "r").readlines()]
+def cmp(l, r):
+    if type(l) != type(r):
+        if type(l) != type([]):
+            return cmp([l], r)
+        return cmp(l, [r])
+    if type(l) != type([]):
+        if l < r:
+            return True
+        elif l > r:
+            return False
+        return None
+    for i in range(min(len(l), len(r))):
+        c = cmp(l[i], r[i])
+        if c != None:
+            return c
+    if len(l) < len(r):
+        return True
+    elif len(l) > len(r):
+        return False
+    return None
+for i in range(0, len(H), 3):
+    if cmp(eval(H[i + 0]), eval(H[i + 1])) == True:
+        S += int((3 + i)/3)
+print('25', S)
+
+def F(l, r):
+    c = cmp(l, r)
+    if c == True:
+        return -1
+    elif c == False:
+        return 1
+    return 0
+H = [l.strip() for l in open("MSG", "r").readlines()]
+L = []
+for i in range(0, len(H), 3):
+    L.append(eval(H[i]))
+    L.append(eval(H[i+1]))
+D1 = [[2]]
+L.append(D1)
+D2 = [[6]]
+L.append(D2)
+L = sorted(L, key=functools.cmp_to_key(F))
+S = 1
+for i in range(len(L)):
+    if L[i] == D1:
+        S *= i+1
+    if L[i] == D2:
+        S *= i+1
+print('26', S)

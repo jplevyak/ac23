@@ -1,0 +1,60 @@
+#!/usr/bin/python3
+
+import queue
+
+H = [l.strip() for l in open("HILL", "r").readlines()]
+B = [0]*len(H)
+for i in range(len(H)):
+    B[i] = [-1]*len(H[0])
+S = [i for i in range(len(H)) if H[i].find('S') != -1 ][0]
+S = (S, H[S].index('S'))
+E = [i for i in range(len(H)) if H[i].find('E') != -1 ][0]
+E = (E, H[E].index('E'))
+B[S[0]][S[1]] = 0
+D = queue.Queue()
+D.put(S)
+def f(h, b, y, x):
+    global B
+    global D
+    if x >= 0 and y >= 0 and x < len(H[0]) and y < len(H):
+        if b < B[y][x] - 1 or B[y][x] == -1 and (h == 'S' or H[y][x] == 'E' or ord(H[y][x]) - ord(h) < 2):
+            B[y][x] = b + 1
+            D.put((y, x))
+while not D.empty():
+    (y, x) = D.get()
+    h, b = H[y][x], B[y][x]
+    f(h, b, y, x-1)
+    f(h, b, y, x+1)
+    f(h, b, y+1, x)
+    f(h, b, y-1, x)
+print('23', B[E[0]][E[1]])
+
+B = [0]*len(H)
+for i in range(len(H)):
+    B[i] = [-1]*len(H[0])
+B[E[0]][E[1]] = 0
+D = queue.Queue()
+D.put(E)
+def f(h, b, y, x):
+    global B
+    global D
+    if x >= 0 and y >= 0 and x < len(H[0]) and y < len(H):
+        if b < B[y][x] - 1 or B[y][x] == -1 and ((h == 'E' and ord('z') - ord(H[y][x]) < 2)  or ord(h) - ord(H[y][x]) < 2):
+            B[y][x] = b + 1
+            D.put((y, x))
+while not D.empty():
+    (y, x) = D.get()
+    h, b = H[y][x], B[y][x]
+    f(h, b, y, x-1)
+    f(h, b, y, x+1)
+    f(h, b, y+1, x)
+    f(h, b, y-1, x)
+best = 10000
+bestp = None
+for y in range(len(H)):
+    for x in range(len(H[0])):
+        if H[y][x] == 'a':
+            if B[y][x] > 0 and B[y][x] < best:
+                best = B[y][x]
+                bestp = (y, x)
+print('24', best)
