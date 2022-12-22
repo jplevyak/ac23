@@ -1,0 +1,44 @@
+#!/usr/bin/python3
+X, Y, Z = 0, 0, 0
+I = []
+for l in [l.strip() for l in open("DROPLET", "r").readlines()]:
+    (x, y, z) = l.split(',')
+    x, y, z = int(x), int(y), int(z)
+    X, Y, Z = max(X, x), max(Y, y), max(Z, z)
+    I.append((z + 1, y + 1, x + 1))
+F = []
+for z in range(Z+3):
+    YY = []
+    for y in range(Y+3):
+        YY.append([False] * (X+3))
+    F.append(YY)
+for i in I:
+    F[i[0]][i[1]][i[2]] = True
+T = 0
+def V(p, f):
+    f(F[z-1][y][x])
+for z in range(1, Z+2):
+    for y in range(1, Y+2):
+        for x in range(1, X+2):
+            if F[z][y][x]:
+                if not F[z-1][y][x]:
+                    T += 1
+                if not F[z+1][y][x]:
+                    T += 1
+                if not F[z][y-1][x]:
+                    T += 1
+                if not F[z][y+1][x]:
+                    T += 1
+                if not F[z][y][x-1]:
+                    T += 1
+                if not F[z][y][x+1]:
+                    T += 1
+print("35", T)
+import copy
+S = copy.deepcopy(F)
+W = [(0, 0, 0)]
+while len(W) > 0:
+    w = W.pop()
+    S[w[0]][w[1]][w[2]] = True
+print("36", 2)
+
