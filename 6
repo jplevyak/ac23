@@ -1,0 +1,32 @@
+#!/usr/bin/python3
+import re
+P = {}
+C = {}
+for l in [l.strip() for l in open("T", "r").readlines()]:
+    R = re.search("Valve ([A-Z]*) has flow rate=([0-9]*); tunnels? leads? to valves? (.*)", l)
+    v, p, c = R.group(1), int(R.group(2)), R.group(3).split(", ")
+    P[v] = p 
+    C[v] = c
+B=0
+def V(p="AA", S=[], O=[], t=0, T=0):
+    global B
+    if t >= 29:
+        return T
+    R = T
+    for c in C[p]:
+        if P[p] > 0 and not p in O:
+            O.append(p)
+            S.append(p)
+            S.append((P[p], t, ((30 - (t + 1)) * P[p])))
+            R = max(R, V(c, S, O, t+2, T + ((30 - (t + 1)) * P[p])))
+            S.pop()
+            S.pop()
+            O.pop()
+        S.append(p)
+        R = max(R, V(c, S, O, t+1, T))
+        S.pop()
+    if R > B:
+        print(B, R, S)
+        B = R
+    return R
+print("31", V())
