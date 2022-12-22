@@ -2,6 +2,7 @@
 X, Y, Z = 0, 0, 0
 I = []
 for l in [l.strip() for l in open("DROPLET", "r").readlines()]:
+#for l in [l.strip() for l in open("T", "r").readlines()]:
     (x, y, z) = l.split(',')
     x, y, z = int(x), int(y), int(z)
     X, Y, Z = max(X, x), max(Y, y), max(Z, z)
@@ -16,29 +17,44 @@ for i in I:
     F[i[0]][i[1]][i[2]] = True
 T = 0
 def V(p, f):
-    f(F[z-1][y][x])
+    f(p, (p[0]-1, p[1], p[2]))
+    f(p, (p[0]+1, p[1], p[2]))
+    f(p, (p[0], p[1]-1, p[2]))
+    f(p, (p[0], p[1]+1, p[2]))
+    f(p, (p[0], p[1], p[2]-1))
+    f(p, (p[0], p[1], p[2]+1))
+def C(p, o):
+    global T
+    if not F[o[0]][o[1]][o[2]]:
+        T += 1
 for z in range(1, Z+2):
     for y in range(1, Y+2):
         for x in range(1, X+2):
             if F[z][y][x]:
-                if not F[z-1][y][x]:
-                    T += 1
-                if not F[z+1][y][x]:
-                    T += 1
-                if not F[z][y-1][x]:
-                    T += 1
-                if not F[z][y+1][x]:
-                    T += 1
-                if not F[z][y][x-1]:
-                    T += 1
-                if not F[z][y][x+1]:
-                    T += 1
+                V((z, y, x), C)
 print("35", T)
 import copy
 S = copy.deepcopy(F)
 W = [(0, 0, 0)]
+def D(p, o):
+    global W
+    if o[0] > Z+2 or o[0] < 0 or o[1] > Y+2 or o[1] < 0 or o[2] > X+2 or o[2] < 0:
+        return
+    if not S[o[0]][o[1]][o[2]]:
+        W.append(o)
 while len(W) > 0:
     w = W.pop()
     S[w[0]][w[1]][w[2]] = True
-print("36", 2)
+    V(w, D)
+T = 0
+def E(p, o):
+    global T
+    if not F[o[0]][o[1]][o[2]] and S[o[0]][o[1]][o[2]]:
+        T += 1
+for z in range(1, Z+2):
+    for y in range(1, Y+2):
+        for x in range(1, X+2):
+            if F[z][y][x]:
+                V((z, y, x), E)
+print("36", T)
 
