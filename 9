@@ -1,0 +1,64 @@
+#!/usr/bin/python3
+B = []
+R = [1, 0, 0, 0]
+O = [0, 0, 0, 0]
+N = []
+for i in range(4):
+    N.append([0]*4)
+T = 0
+H = {}
+def to_tuple(l):
+    return (l[0], l[1], l[2], l[3])
+def to_s(t, r, o):
+    return (t, to_tuple(r), to_tuple(o))
+    return (l[0], l[1], l[2], l[3])
+def V(t, R, O):
+    global H
+    if t > 24:
+        return O[3]
+    B = 0
+    pause = False
+    for i in range(len(N)):
+        r = R[:]
+        o = O[:]
+        ok = True
+        for x in range(len(N[i])):
+            ok = ok and o[x] >= N[i][x]
+        if not ok and pause:
+            continue
+        pause = pause or not ok
+        done = True
+        for x in range(len(r)):
+            o[x] += r[x]
+        if ok:
+            for x in range(len(N[i])):
+                if N[i][x] > 0:
+                    o[x] -= N[i][x]
+            R[i] += 1
+        h = to_s(t, r, o)
+        if h in H: 
+            B = max(B, H[h])
+        else:
+            B = max(B, V(t+1, r, o))
+            H[h] = B
+    return B
+W = []
+for l in [l.strip() for l in open("T", "r").readlines()]:
+    x = l.split(' ')
+    I, OO, CO, BO, BC, GO, GB = int(x[1][:-1]), int(x[6]), int(x[12]), int(x[18]), int(x[21]), int(x[27]), int(x[30])
+    N[0][0] = OO
+    N[1][0] = CO
+    N[2][0] = BO
+    N[2][1] = BC
+    N[3][0] = GO
+    N[3][2] = GB
+    W.append(to_s(1, R[:], O[:]))
+    v = 0
+    while len(W) > 0:
+        (t, r, o) = W.pop()
+        if s[2][0GO
+    print(I, v)
+    T = I * v
+print("37", T)
+print("38", T)
+
