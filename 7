@@ -1,12 +1,10 @@
 #!/usr/bin/python3
 r  = [l.strip() for l in open("ROCKS", "r").readlines()][0]
 ri = 0
-# r = ">>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>"
 B = [["####"], [" # ", "###", " # "], ["###", "  #", "  #"], ["#", "#", "#", "#"], ["##", "##"]]
 bi = 0
-H = 0
 F = ["#"*9]
-for i in range(1, 100000000):
+for i in range(1, 1000000000):
     F.append("#" + (" "*7) + "#")
 def C(b, x, y):
     for i, Y in enumerate(b):
@@ -14,14 +12,15 @@ def C(b, x, y):
             if Y[j] == "#" and F[y + i][x + j] == "#":
                 return True
     return False
-#for _ in range(2022):
-#for _ in range(50455):
-#for _ in range(13345):
+L = 1000000000000
 Z = len(r)*len(B)
+H = 0
 O = 0
 P1 = 0
-for _ in range(2022):
-# for z in range(Z * 20):
+P2 = 0
+history = []
+groups = []
+for z in range(Z * 500):
     b = B[bi]
     bi = (bi + 1) % len(B)
     x = 3
@@ -43,26 +42,18 @@ for _ in range(2022):
             if Y[j] == "#":
                 F[y + i] = F[y + i][:(x + j)] + "#" + F[y + i][(x + j + 1):]
     H = max(H, y + len(b) - 1)
-    #if z % Z == Z-1:
-    #    print(H - O)
-    #    O = H
-    #if z == 2021:
-    #    P1 = H
-    #    break
-print("33", H)
-
-C = len(r)*5
-M = int(1000000000000 / C)
-R = 1000000000000 % C
-P = 78498
-print(C, M, R, P)
-
-print("34", M * P + 20774)
-
-print(308 + 300 * (5000000000 - 1))
-
-print(int(1000000000000/200/7) * 2120 + 308 + 300)
-print(1000000000000 % 7)
-
-
-    
+    history.append(H)
+    if z == 2021:
+        P1 = H
+    if z % Z == Z-1:
+        groups.append(H - O)
+        O = H
+        b = int(z/Z)
+        if len(groups) > 9 and groups[1:5] == groups[b-4:b]:
+            cycle_len = b-5
+            g = int(L / Z)
+            remainder = L % (Z * cycle_len)
+            P2 = int(g / cycle_len) * sum(groups[1:(cycle_len+1)]) + history[remainder-1]
+            break
+print("33", P1)
+print("34", P2)

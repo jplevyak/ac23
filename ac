@@ -1,0 +1,696 @@
+#!/usr/bin/python3
+import math
+import queue
+import functools
+import collections
+import re
+
+elf = 0
+elves = []
+for l in open("ELVES", "r").readlines():
+    l = l.strip()
+    if len(l):
+        elf += int(l)
+    else:
+        elves.append(elf)
+        elf = 0
+if elf > 0:
+    elves.append(elf)
+print('1', max(elves))
+top3 = sorted(elves, reverse=True)[:3]
+print('2', sum(top3))
+
+score = 0
+rating = [0, 6, 3, 0, 6]
+for l in open("RPS", "r").readlines():
+    (a, b) = l.strip().split(' ')
+    a = ord(a)-ord('A')
+    b = ord(b)-ord('X')
+    outcome = 2 + a - b
+    score += (b + 1) + rating[outcome]
+print('3', score)
+
+score = 0
+rating = [0, 3, 6]
+for l in open("RPS", "r").readlines():
+    (a, b) = l.strip().split(' ')
+    a = ord(a)-ord('A')
+    b = ord(b)-ord('X') # outcome L D W
+    choice = (3 + a + b - 1) % 3;
+    s = rating[b] + choice + 1
+    score += s
+print('4', score)
+
+score = 0
+for l in open("SACK", "r").readlines():
+    l = l.strip()
+    m = int(len(l)/2)
+    a = l[:m]
+    b = l[m:]
+    i = next(iter(set(x for x in a).intersection(set(x for x in b))))
+    if i >= 'a' and i <= 'z':
+        score += ord(i) - ord('a') + 1
+    else:
+        score += ord(i) - ord('A') + 27 
+print('5', score)
+
+score = 0
+l = open("SACK", "r").readlines()
+i = iter(l)
+for _ in range(int(len(l)/3)):
+    a = set(x for x in next(i).strip())
+    b = set(x for x in next(i).strip())
+    c = set(x for x in next(i).strip())
+    d = next(iter(a.intersection(b).intersection(c)))
+    if d >= 'a' and d <= 'z':
+        score += ord(d) - ord('a') + 1
+    else:
+        score += ord(d) - ord('A') + 27 
+print('6', score)
+
+count = 0
+for l in  open("PAIRS", "r").readlines():
+    (j, k) = l.strip().split(',')
+    (a, b) = j.split('-')
+    (x, y) = k.split('-')
+    if ((int(a) <= int(x) and int(b) >= int(y)) or (int(x) <= int(a) and int(y) >= int(b))):
+        count += 1
+print('7', count)
+
+count = 0
+for l in  open("PAIRS", "r").readlines():
+    (j, k) = l.strip().split(',')
+    (a, b) = j.split('-')
+    (x, y) = k.split('-')
+    if (int(a) > int(y) or int(x) > int(b)) or int(b) < int(x) or int(y) < int(a):
+        pass
+    else:
+        count += 1
+print('8', count)
+
+p = [[] for _ in range(9)]
+l = open("CRATES", "r").readlines()
+for x in l[8::-1]:
+    r = [x[1 + i*4] for i in range(9)]
+    for i in range(9):
+        if r[i] != ' ':
+            p[i].append(r[i])
+for x in l[10:]:
+    (_, n, _, f, _, t) = x.strip().split(' ')
+    for y in range(int(n)):
+        p[int(t)-1].append(p[int(f)-1].pop())
+print('9', "".join(list(x.pop() for x in p)))
+
+p = [[] for _ in range(9)]
+l = open("CRATES", "r").readlines()
+for x in l[8::-1]:
+    r = [x[1 + i*4] for i in range(9)]
+    for i in range(9):
+        if r[i] != ' ':
+            p[i].append(r[i])
+for x in l[10:]:
+    (_, n, _, f, _, t) = x.strip().split(' ')
+    n, f, t = int(n), int(f) - 1, int(t) - 1
+    p[t].extend(p[f][len(p[f])-n:])
+    p[f] = p[f][:len(p[f])-n]
+print('10', "".join(list(x.pop() for x in p)))
+
+l = open("SIGNAL", "r").readlines()[0].strip()
+for i in range(4, len(l)):
+    if len(set(l[i-4:i])) == 4:
+        break
+print('11', i)
+
+l = open("SIGNAL", "r").readlines()[0].strip()
+for i in range(14, len(l)):
+    if len(set(l[i-14:i])) == 14:
+        break
+print('12', i)
+
+cwd = ''
+files = {}
+l = open("FILES", "r").readlines()
+for i in range(len(l)):
+    l[i] = l[i].strip()
+i = 0
+while i < len(l): 
+    x = l[i]
+    if x[0] == '$':
+        if x[2] == 'c':
+            if x[5] == '/':
+                cwd = ''
+            elif x[5] == '.':
+                cwd = cwd[:cwd.rindex('/')]
+            else:
+                cwd = cwd + '/' + x[5:]
+            i += 1
+        elif x[2] == 'l':
+            i += 1
+            while i < len(l):
+                x = l[i]
+                if x[0] == '$' or i >= len(l):
+                    break
+                if x[0] == 'd':
+                    files[cwd + '/' + x[4:]] = -1
+                else:
+                    (s , f) = x.split(' ')
+                    files[cwd + '/' + f] = int(s)
+                i += 1
+        else:
+            print('bad2', x)
+            i += 1
+    else:
+        print('bad', x)
+        i += 1
+dirs = {}
+dirs[''] = 0
+for k in sorted(files.keys()):
+    if files[k] < 0:
+        dirs[k] = 0
+    for d in dirs:
+        if k not in dirs:
+            if k.startswith(d):
+                dirs[d] += files[k]
+total = 0
+for d in dirs:
+    if dirs[d] <= 100000:
+        total += dirs[d]
+print('13', total)
+
+need = dirs[''] - 40000000
+delete = 0
+for t in sorted(dirs.values()):
+    delete = t
+    if t >= need:
+        break
+print('14', delete)
+
+
+l = open("TREES", "r").readlines()
+for i in range(len(l)):
+    l[i] = l[i].strip()
+X = len(l[0])
+Y = len(l)
+
+total = 2 * (X - 1) + 2 * (Y - 1)  # outer
+trees = [0] * (Y-2)
+for y in range(Y-2):
+    trees[y] = [0] * (X-2)
+
+for y in range(1, Y-1):
+    height = 0
+    for x in range(X-1):
+        h = l[y][x]
+        if x == 0:
+            height = h
+            continue
+        if h > height:
+            height = h
+            trees[y-1][x-1] = 1
+for y in range(1, Y-1):
+    height = 0
+    for x in range(X-1, 0, -1):
+        h = l[y][x]
+        if x == X-1:
+            height = h
+            continue
+        if h > height:
+            height = h
+            trees[y-1][x-1] = 1
+for x in range(1, X-1):
+    height = 0
+    for y in range(Y-1):
+        h = l[y][x]
+        if y == 0:
+            height = h
+            continue
+        if h > height:
+            height = h
+            trees[y-1][x-1] = 1
+for x in range(1, X-1):
+    height = 0
+    for y in range(Y-1, 0, -1):
+        h = l[y][x]
+        if y == Y-1:
+            height = h
+            continue
+        if h > height:
+            height = h
+            trees[y-1][x-1] = 1
+for y in trees:
+    for x in y:
+        if x > 0:
+            total += 1
+print('15', total)
+
+trees = [0] * Y
+for y in range(Y):
+    trees[y] = [1] * X
+def view(h, p):
+    if len(p) == 0:
+        return 0
+    for i in range(len(p)):
+        if p[i] >= h:
+            return i + 1
+    return len(p)
+def rview(h, p):
+    if len(p) == 0:
+        return 0
+    for i in range(len(p)-1,-1,-1):
+        if p[i] >= h:
+            return len(p) -1 - i + 1
+    return len(p)
+for y in range(0, Y):
+    for x in range(X):
+        h = l[y][x]
+        p = l[y][:x]
+        trees[y][x] *= rview(h, p)
+        p = l[y][x+1:]
+        trees[y][x] *= view(h, p)
+        pp = "".join([l[j][x] for j in range(Y)])
+        p = pp[:y]
+        trees[y][x] *= rview(h, p)
+        p = pp[y+1:]
+        trees[y][x] *= view(h, p)
+h = -1
+for y in trees:
+    for x in y:
+        if x > h:
+            h = x
+print('16', h)
+
+def move(p, d):
+    return (p[0] + d[0], p[1] + d[1])
+def delta(h, t):
+    x, y = t[0], t[1]
+    if abs(h[0] - t[0]) > 1 or abs(h[1] - t[1]) > 1:
+        if h[0] != t[0]:
+            x = int(x + math.copysign(1, h[0] - t[0]))
+        if h[1] != t[1]:
+            y = int(y + math.copysign(1, h[1] - t[1]))
+    return (x, y)
+
+visited = set()
+dir = { 'L' : (-1, 0), 'R': (1, 0), 'U': (0, -1), 'D': (0, 1) }
+H = (0, 0)
+T = (0, 0)
+lines = open("ROPE", "r").readlines()
+for l in lines:
+    d, n =  l.strip().split(' ')
+    for _ in range(int(n)):
+        H = move(H, dir[d])
+        T = delta(H, T)
+        visited.add(T)
+print('17', len(visited))
+
+visited = set()
+N = [(0, 0)] * 10
+lines = open("ROPE", "r").readlines()
+for l in lines:
+    d, n =  l.strip().split(' ')
+    for _ in range(int(n)):
+        N[0] = move(N[0], dir[d])
+        for i in range(1, 10):
+            N[i] = delta(N[i-1], N[i])
+        visited.add(N[9])
+print('18', len(visited))
+
+C = 1
+X = 1
+T = 0
+def score():
+    global T
+    if (C < 221 and C > 19 and (C - 20) % 40 == 0):
+        T += C * X
+for l in open("PROG", "r").readlines():
+    if l[0] == 'n':
+        C += 1
+        score()
+    else:
+        (c, v) = l.strip().split(' ')
+        C += 1
+        score()
+        C += 1
+        X += int(v)
+        score()
+print('19', T)
+
+C = 1
+X = 1
+S = [0]*6
+for i in range(6):
+    S[i] = [' '] * 40
+def score():
+    global S
+    p = ((C-1) % 40)
+    l = int(((C-1) / 40))
+    if p - 1 == X or p == X or p + 1 == X:
+        S[l][p] = 'X'
+for l in open("PROG", "r").readlines():
+    if l[0] == 'n':
+        C += 1
+        score()
+    else:
+        (c, v) = l.strip().split(' ')
+        C += 1
+        score()
+        C += 1
+        X += int(v)
+        score()
+print('20')
+for l in S:
+    print("".join(l))
+
+S, O, D, T, F = [], [], [], [], []
+I =[0]*8
+l = open("MONKEY", "r").readlines()
+for i in range(0, 56, 7):
+    S.append([int(x.strip()) for x in l[i+1].strip().split(':')[1].split(',')])
+    O.append(l[i+2].strip().split('=')[1])
+    D.append(int(l[i+3].strip()[-2:]))
+    T.append(int(l[i+4].strip()[-2:]))
+    F.append(int(l[i+5].strip()[-2:]))
+new = 0
+for _ in range(20):
+    for m in range(8):
+        I[m] += len(S[m])
+        for old in reversed(S[m]):
+            new = int(eval(O[m])/3)
+            if new % D[m] == 0:
+                S[T[m]].append(new)
+            else:
+                S[F[m]].append(new)
+        S[m] = []
+I = sorted(I, reverse=True)
+print('21', I[0] * I[1])
+
+S, O, D, T, F = [], [], [], [], []
+DD = 1
+I =[0]*8
+l = open("MONKEY", "r").readlines()
+for i in range(0, 56, 7):
+    S.append([int(x.strip()) for x in l[i+1].strip().split(':')[1].split(',')])
+    O.append(l[i+2].strip().split('=')[1])
+    D.append(int(l[i+3].strip()[-2:]))
+    DD *= D[len(D)-1]
+    T.append(int(l[i+4].strip()[-2:]))
+    F.append(int(l[i+5].strip()[-2:]))
+new = 0
+for q in range(10000):
+    for m in range(8):
+        I[m] += len(S[m])
+        for old in reversed(S[m]):
+            new = eval(O[m]) % DD
+            if new % D[m] == 0:
+                S[T[m]].append(new)
+            else:
+                S[F[m]].append(new)
+        S[m] = []
+I = sorted(I, reverse=True)
+print('22', I[0] * I[1])
+
+H = [l.strip() for l in open("HILL", "r").readlines()]
+B = [0]*len(H)
+for i in range(len(H)):
+    B[i] = [-1]*len(H[0])
+S = [i for i in range(len(H)) if H[i].find('S') != -1 ][0]
+S = (S, H[S].index('S'))
+E = [i for i in range(len(H)) if H[i].find('E') != -1 ][0]
+E = (E, H[E].index('E'))
+B[S[0]][S[1]] = 0
+D = queue.Queue()
+D.put(S)
+def f(h, b, y, x):
+    global B
+    global D
+    if x >= 0 and y >= 0 and x < len(H[0]) and y < len(H):
+        if b < B[y][x] - 1 or B[y][x] == -1 and (h == 'S' or H[y][x] == 'E' or ord(H[y][x]) - ord(h) < 2):
+            B[y][x] = b + 1
+            D.put((y, x))
+while not D.empty():
+    (y, x) = D.get()
+    h, b = H[y][x], B[y][x]
+    f(h, b, y, x-1)
+    f(h, b, y, x+1)
+    f(h, b, y+1, x)
+    f(h, b, y-1, x)
+print('23', B[E[0]][E[1]])
+
+B = [0]*len(H)
+for i in range(len(H)):
+    B[i] = [-1]*len(H[0])
+B[E[0]][E[1]] = 0
+D = queue.Queue()
+D.put(E)
+def f(h, b, y, x):
+    global B
+    global D
+    if x >= 0 and y >= 0 and x < len(H[0]) and y < len(H):
+        if b < B[y][x] - 1 or B[y][x] == -1 and ((h == 'E' and ord('z') - ord(H[y][x]) < 2)  or ord(h) - ord(H[y][x]) < 2):
+            B[y][x] = b + 1
+            D.put((y, x))
+while not D.empty():
+    (y, x) = D.get()
+    h, b = H[y][x], B[y][x]
+    f(h, b, y, x-1)
+    f(h, b, y, x+1)
+    f(h, b, y+1, x)
+    f(h, b, y-1, x)
+best = 10000
+bestp = None
+for y in range(len(H)):
+    for x in range(len(H[0])):
+        if H[y][x] == 'a':
+            if B[y][x] > 0 and B[y][x] < best:
+                best = B[y][x]
+                bestp = (y, x)
+print('24', best)
+
+S = 0
+H = [l.strip() for l in open("MSG", "r").readlines()]
+def cmp(l, r):
+    if type(l) != type(r):
+        if type(l) != type([]):
+            return cmp([l], r)
+        return cmp(l, [r])
+    if type(l) != type([]):
+        if l < r:
+            return True
+        elif l > r:
+            return False
+        return None
+    for i in range(min(len(l), len(r))):
+        c = cmp(l[i], r[i])
+        if c != None:
+            return c
+    if len(l) < len(r):
+        return True
+    elif len(l) > len(r):
+        return False
+    return None
+for i in range(0, len(H), 3):
+    if cmp(eval(H[i + 0]), eval(H[i + 1])) == True:
+        S += int((3 + i)/3)
+print('25', S)
+
+def F(l, r):
+    c = cmp(l, r)
+    if c == True:
+        return -1
+    elif c == False:
+        return 1
+    return 0
+H = [l.strip() for l in open("MSG", "r").readlines()]
+L = []
+for i in range(0, len(H), 3):
+    L.append(eval(H[i]))
+    L.append(eval(H[i+1]))
+D1 = [[2]]
+L.append(D1)
+D2 = [[6]]
+L.append(D2)
+L = sorted(L, key=functools.cmp_to_key(F))
+S = 1
+for i in range(len(L)):
+    if L[i] == D1:
+        S *= i+1
+    if L[i] == D2:
+        S *= i+1
+print('26', S)
+
+X = 0
+Y = 0
+S = []
+for l in [l.strip() for l in open("SAND", "r").readlines()]:
+    T = []
+    for p in l.split("->"):
+        (x,y) = p.strip().split(',')
+        x, y = int(x), int(y)
+        T.append([x,y])
+        if x > X:
+            X = x
+        if y > Y:
+            Y = y
+    S.append(T)
+F = [0]*(Y+3)
+for i in range(len(F)):
+    F[i] = [0]*(X+1+Y+1)
+def n(p, e):
+    if p[0] == e[0]:
+        if e[1] > p[1]:
+            p[1] += 1
+        else:
+            p[1] -= 1
+    else:
+        if e[0] > p[0]:
+            p[0] += 1
+        else:
+            p[0] -= 1
+for t in S:
+    p = t[0]
+    for i in range(1, len(t)):
+        e = t[i]
+        while (p != e):
+            F[p[1]][p[0]] = 1
+            n(p, e)
+        F[p[1]][p[0]] = 1
+        p = e
+done = False
+def drop(p, limit=True):
+    global done
+    if (limit and p[1] > Y) or F[p[1]][p[0]] > 0:
+        done = True
+        return False
+    if p[1]>Y+1:
+        print(p)
+    if F[p[1]+1][p[0]] < 1:
+        p[1] += 1
+    elif F[p[1]+1][p[0]-1] < 1:
+        p[1] += 1
+        p[0] -= 1
+    elif F[p[1]+1][p[0]+1] < 1:
+        p[1] += 1
+        p[0] += 1
+    else:
+        F[p[1]][p[0]] = 2
+        return False
+    return True
+I = -1
+while not done:
+    I += 1
+    p = [500, 0]
+    while drop(p):
+        pass
+print("27", I)
+
+for l in F:
+    for i in range(len(l)):
+        if l[i] == 2:
+            l[i] = 0
+F[Y+2] = [1]*(X+1+Y+1)
+done = False
+I = -1
+while not done:
+    I += 1
+    p = [500, 0]
+    while drop(p, False):
+        pass
+print("28", I)
+
+M = []
+S = []
+Y=2000000
+for l in [l.strip() for l in open("SENSOR", "r").readlines()]:
+    R = re.search("Sensor at x=([^,]*), y=([^:]*): closest beacon is at x=([^,]*), y=([\-0-9]*)", l)
+    sx, sy, bx, by = int(R.group(1)), int(R.group(2)), int(R.group(3)), int(R.group(4)) 
+    d = abs(sx - bx) + abs(sy - by) - abs(sy - Y)
+    if d >= 0:
+        M.append((sx - d, sx + d))
+M = sorted(M, key=lambda m: m[0])
+C=0
+X=M[0][0]
+for m in M:
+    if X < m[1]:
+        C += m[1] - max(X, m[0])
+        X = max(X, m[1])
+print("29", C)
+
+M = []
+for l in [l.strip() for l in open("SENSOR", "r").readlines()]:
+    R = re.search("Sensor at x=([^,]*), y=([^:]*): closest beacon is at x=([^,]*), y=([\-0-9]*)", l)
+    sx, sy, bx, by = int(R.group(1)), int(R.group(2)), int(R.group(3)), int(R.group(4)) 
+    M.append((sx, sy, abs(sx - bx) + abs(sy - by)))
+Y = 2628000 
+F = None
+while Y < 4000000 and not F:
+    L = []
+    for m in M:
+        d = m[2] - abs(m[1] - Y)
+        if d >= 0:
+            L.append((m[0] - d, m[0] + d))
+    L = sorted(L, key=lambda m: m[0])
+    D = []
+    X=L[0][1]
+    for l in L:
+        if l[0] > X + 1:
+            X = X + 1
+            F = (X, Y)
+            break
+        X = max(X, l[1])
+    if F:
+        break
+    Y += 1
+print("30", X * 40000000 + Y)
+
+P = {}
+C = {}
+for l in [l.strip() for l in open("PRESSURE", "r").readlines()]:
+    R = re.search("Valve ([A-Z]*) has flow rate=([0-9]*); tunnels? leads? to valves? (.*)", l)
+    v, p, c = R.group(1), int(R.group(2)), R.group(3).split(", ")
+    P[v] = p 
+    C[v] = c
+
+def dto(p):
+    d = collections.defaultdict(lambda: 1000)
+    d[p] = 0
+    W = [p]
+    while len(W) > 0:
+        w = W.pop()
+        for c in C[w]:
+            o = d[c]
+            d[c] = min(d[c], d[w] + 1)
+            if o != d[c]:
+                W.append(c)
+    return d
+D = {}
+for p in P:
+    if P[p] > 0 or p == 'AA':
+        D[p] = dto(p)
+
+def V(p="AA", O=[], t=0, T=0):
+    if t >= 28:
+        return T
+    O.append(p)
+    R = T
+    d = D[p]
+    for c in d:
+        if P[c] == 0 or c in O:
+            continue
+        R = max(R, V(c, O, t + d[c]+1, T + ((30 - (t + d[c] + 1)) * P[c])))
+    O.pop()
+    return R
+print("31", V())
+
+def W(p="AA", p2="AA", O=[], t=0, t2=0, T=0):
+    if t >= 24:
+        return T
+    R = T
+    d = D[p]
+    for c in d:
+        if P[c] == 0 or c in O:
+            continue
+        O.append(c)
+        R = max(R, W(p2, c, O, t2, t + d[c]+1, T + ((26 - (t + d[c] + 1)) * P[c])))
+        O.pop()
+    return R
+print("32", W())
