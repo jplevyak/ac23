@@ -867,3 +867,29 @@ for i, l in enumerate([l.strip() for l in open("GEO", "r").readlines()]):
     if i < 3:
         T *= V(l, 32)
 print("38", T)
+
+I = [int(l.strip()) for l in open("COORD", "r").readlines()]
+P0 = I.index(0)
+I = list(enumerate(I))
+F = I[:]
+L = len(I)
+def P():
+    global F
+    for i in I:
+        x = F.index(i)
+        y = (x + i[1]) % (L-1)
+        if y == 0:
+            y = L-1
+        F.pop(x)
+        F.insert(y, i)
+P()
+p0 = F.index((P0, 0))
+print("39", sum([F[(p0 + i) % L][1] for i in [1000, 2000, 3000]]))
+
+I = [int(l.strip()) * 811589153 for l in open("COORD", "r").readlines()]
+I = list(enumerate(I))
+F = I[:]
+for _ in range(10):
+    P()
+p0 = F.index((P0, 0))
+print("40", sum([F[(p0 + i) % L][1] for i in [1000, 2000, 3000]]))
