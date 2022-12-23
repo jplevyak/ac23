@@ -893,3 +893,57 @@ for _ in range(10):
     P()
 p0 = F.index((P0, 0))
 print("40", sum([F[(p0 + i) % L][1] for i in [1000, 2000, 3000]]))
+
+I = [l.strip() for l in open("EQ", "r").readlines()]
+def V(humn=None):
+    D = {}
+    for i in I:
+        D[i.split(":")[0]] = 0
+    more = True
+    while more:
+        more = False
+        root = 0
+        for i in I:
+            x = i.split(" ")
+            n = i.split(":")[0]
+            if humn != None:
+                if n == "humn":
+                    D[n] = humn
+                    continue
+                if n == "root":
+                    root = (D[x[1]], D[x[3]])
+            if len(x) > 2:
+                v = 0
+                try:
+                    v = eval("D['" + x[1] + "']" + x[2] + "D['" + x[3] + "']")
+                except:
+                    more = True
+                if D[n] != v:
+                    more = True
+                    D[n] = v
+            else:
+                D[i.split(":")[0]] = int(x[1])
+    if humn != None:
+        return root
+    else:
+        return D
+print("41", int(V()["root"]))
+
+def bisect_left(a, x, key=None):
+    lo = 0
+    hi = len(a)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        k = key(a[mid])
+        if k < x:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+x = V(0)[1]
+def VV(x):
+    return V(x)[0]
+R = range(10000000000000, 0, -1)
+b = bisect_left(R, x, key=VV)
+r = R[6321874591983]
+print("42", r)

@@ -1,0 +1,44 @@
+#!/usr/bin/python3
+F = [l for l in open("T", "r").readlines()]
+#F = [l for l in open("EQ", "r").readlines()]
+D = "RDLU"
+O = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+P = F[len(F)-1].strip()
+print(P)
+F = F[:len(F)-2]
+X = len(F[0])-1
+Y = len(F)
+pi = 0
+for f in F:
+    print(f)
+x = F[0].index(".")
+y = 0
+print('x', x)
+d = 'R'
+while pi < len(P):
+    if P[pi].isdigit():
+        s = pi
+        while pi < len(P) and P[pi].isdigit():
+            pi += 1
+        v = int(P[s:pi])
+        for _ in range(v):
+            ny = (y + O[D.index(d)][0]) % Y
+            nx = (x + O[D.index(d)][1]) % X
+            while F[ny][nx] == ' ':
+                print('skip', nx, ny)
+                ny = (ny + O[D.index(d)][0]) % Y
+                nx = (nx + O[D.index(d)][1]) % X
+            if F[ny][nx] == '#':
+                break
+            print(F[ny][nx], nx, ny)
+            y = ny
+            x = nx
+        print(v, 'x', x, 'y', y)
+    else:
+        d = D[(D.index(d) + (1 if P[pi] == 'R' else -1)) % len(D)]
+        pi += 1
+        print(d)
+print('x', x + 1, 'y', y + 1)
+print("41", (y + 1) * 1000 + (x + 1) * 4 + D.index(d))
+
+print("42", 2)
