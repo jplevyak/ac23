@@ -1,6 +1,6 @@
 #!/usr/bin/python3
-#F = [l for l in open("T", "r").readlines()]
-F = [l for l in open("CAVE", "r").readlines()]
+F = [l for l in open("T", "r").readlines()]
+#F = [l for l in open("CAVE", "r").readlines()]
 D = "RDLU"
 O = [(0, 1), (1, 0), (0, -1), (-1, 0)]
 P = F[len(F)-1].strip()
@@ -34,4 +34,65 @@ while pi < len(P):
         pi += 1
 print("41", (y + 1) * 1000 + (x + 1) * 4 + D.index(d))
 
-print("42", 2)
+Y1 = int(Y/3)
+Y2 = int(2*Y/3)
+X1 = int(X/4)
+X2 = int(2*X/4)
+X3 = int(3*X/4)
+def wrap(x, y, d): # return (newy, newx)
+    (dy, dx) = O[D.index(d)]
+    if y < Y1 and dx < 0:
+        return (Y1, X1 - y, 'D')
+    if y < Y1 and dx > 0:
+        return (Y2 - y, X, 'L')
+    if y < Y1 and dy < 0:
+        return (Y1, -y, 'D')
+    if Y1 <= y < Y2 and dx > 0:
+        return (Y2, X3 + Y2 - y - 1, 'D')
+    if Y1 <= y < Y2 and dx < 0:
+        return (Y, y - Y1 + X3, 'U')
+    if Y1 <= y < Y2 and x <= X1 and dy < 0:
+        return (0, X3 - x, 'D')
+    if Y1 <= y < Y2 and X1 < x <= X2 and dy < 0:
+        return (x - X1, X2, 'R')
+    if Y1 <= y < Y2 and x <= X1 and dy > 0:
+        return (Y, X3 - x, 'U')
+    if Y1 <= y < Y2 and X1 < x <= X2 and dy > 0:
+        return (Y2 + x - X1, 'R')
+    if Y1 <= y < Y2 and X1 < x <= X2 and dx > 0:
+        return (Y2, X2 - y - Y2, 'D')
+    if y >= Y2 and X2 < x <= X3 and dy > 0:
+        return (Y2 - 1, X3 - x - 1, 'U')
+    if y >= Y2 and x >= X3 and dy > 0:
+        return (0, X - x + Y1, 'R')
+    if y >= Y2 and x >= X3 and dx > 0:
+        return (Y - y, X3, 'L')
+    if y >= Y2 and x >= X3 and dy < 0:
+        return (Y - y, X3, 'L')
+    return None
+pi = 0
+x = F[0].index(".")
+y = 0
+d = 'R'
+while pi < len(P):
+    if P[pi].isdigit():
+        s = pi
+        while pi < len(P) and P[pi].isdigit():
+            pi += 1
+        v = int(P[s:pi])
+        for _ in range(v):
+            ny = y + O[D.index(d)][0]
+            nx = x + O[D.index(d)][1]
+            nd = d
+            if ny >= Y or ny < 0 or nx >= X or nx < 0 or F[ny][nx] == ' ':
+                ny, nx, nd = wrap(x, y, d)
+            if F[ny][nx] == '#':
+                break
+            y = ny
+            x = nx
+            d = nd
+    else:
+        o = d
+        d = D[(D.index(d) + (1 if P[pi] == 'R' else -1)) % len(D)]
+        pi += 1
+print("42", (y + 1) * 1000 + (x + 1) * 4 + D.index(d))
