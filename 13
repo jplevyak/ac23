@@ -34,64 +34,8 @@ while pi < len(P):
         pi += 1
 print("41", (y + 1) * 1000 + (x + 1) * 4 + D.index(d))
 
-Y1 = int(Y/3)
-Y2 = int(2*Y/3)
-X1 = int(X/4)
-X2 = int(2*X/4)
-X3 = int(3*X/4)
-def wrap(x, y, d): # return (newy, newx)
+def wrap(x, y, d): # return (newy, newx, newd)
     (dy, dx) = O[D.index(d)]
-    if y < Y1 and dx < 0:
-        return (Y1, X1 + y, 'D')
-    if y < Y1 and dx > 0:
-        return (Y - 1 - y, X-1, 'L')
-    if y < Y1 and dy < 0:
-        return (Y1, X1-1-(x-X2), 'D')
-    if Y1 <= y < Y2 and dx > 0:
-        return (Y2, X3 + Y2 - y - 1, 'D')
-    if Y1 <= y < Y2 and dx < 0:
-        return (Y-1, y - Y1 + X3, 'U')
-    if Y1 <= y < Y2 and x < X1 and dy < 0:
-        return (0, X3 - x - 1, 'D')
-    if Y1 <= y < Y2 and x < X1 and dy > 0:
-        return (Y-1, X3 - 1 - x, 'U')
-    if Y1 <= y < Y2 and X1 <= x < X2 and dy < 0:
-        return (x - X1, X2, 'R')
-    if Y1 <= y < Y2 and x < X1 and dy > 0: #
-        return (Y, X3 - x, 'U')
-    if Y1 <= y < Y2 and X1 <= x < X2 and dy > 0: #
-        return (X1 - x - 1, X2, 'R')
-    if Y1 <= y < Y2 and dx > 0: #
-        return (Y2, X2 - y - Y2, 'D')
-    if y >= Y2 and X2 <= x < X3 and dy > 0: #
-        return (Y2 - 1, X3 - x - 1, 'U')
-    if y >= Y2 and x >= X3 and dy > 0: #
-        return (X - x + Y1 - 1, 0, 'R')
-    if y >= Y2 and x >= X3 and dx > 0:  #
-        return (y - Y2, X3 - 1, 'L') 
-    if y >= Y2 and x >= X3 and dy < 0: #
-        return (Y2 - (x - X3) - 1, X3 - 1, 'L')
-    if y >= Y2 and dx < 0: #
-        return (Y2 - 1, X2 - 1 - (y - Y2), 'L')
-    print(X, Y, x, y, d)
-    import sys
-    sys.exit(1)
-    return None
-
-def T(x, y, d):
-    FF = []
-    for i in range(len(F)):
-        FF.append(list(F[i]))
-    ny, nx, nd = wrap(x, y, d)
-    print(x, y, d, nx, ny, nd)
-    FF[y][x] = d.lower()
-    FF[ny][nx] = nd
-    for f in FF:
-        print("".join(f))
-T(0, Y2-1, 'D')
-T(X1-1, Y2-1, 'D')
-T(X1, Y2-1, 'D')
-T(X2-1, Y2-1, 'D')
 
 pi = 0
 x = F[0].index(".")
