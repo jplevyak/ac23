@@ -98,3 +98,21 @@ for _, v in g.items():
     if len(v) == 2:
         t += v[0][2] * v[1][2]
 print('3b', t)
+
+t = 0
+for l in open("4", "r").readlines():
+    l = l.split(':')[1].split('|')
+    w = set(l[0].strip().split()).intersection(set(l[1].strip().split()))
+    if len(w) > 0:
+        t += 2 ** (len(w) - 1)
+print('4a', t)
+
+t = 0
+c = [1] * 1000
+for i, l in enumerate(open("4", "r").readlines()):
+    l = l.split(':')[1].split('|')
+    w = set(l[0].strip().split()).intersection(set(l[1].strip().split()))
+    for x in range(1, len(list(w)) + 1):
+        c[i + x] += c[i]
+    t += c[i]
+print('4b', t)
