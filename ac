@@ -43,3 +43,58 @@ for l in open("2", "r").readlines():
             n[v[1][0]] = max(int(v[0]), n[v[1][0]])
     t += n['r'] * n['g'] * n['b']
 print('2b', t)
+
+t = 0
+b = []
+b.append('.' * 256)
+for l in open("3", "r").readlines():
+    b.append('.' + l.strip()+ '.')
+b.append('.' * 256)
+
+def issym(c):
+    return c != '.' and not c.isdigit()
+
+oo = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+found = False
+for l in range(1, len(b)-1):
+    i = 1
+    while i < len(b[l]):
+        if not b[l][i].isdigit():
+            i += 1
+            continue
+        s = i
+        while b[l][i].isdigit():
+            for o in oo:
+                if issym(b[l + o[0]][i + o[1]]):
+                    found = True
+            i += 1
+        if found:
+            t += int(b[l][s:i])
+            found = False
+print('3a', t)
+
+t = 0
+from collections import defaultdict
+g = defaultdict(set)
+found = set()
+for l in range(1, len(b)-1):
+    i = 1
+    while i < len(b[l]):
+        if not b[l][i].isdigit():
+            i += 1
+            continue
+        s = i
+        while b[l][i].isdigit():
+            for o in oo:
+                if b[l + o[0]][i + o[1]] == '*':
+                    found.add((l + o[0], i + o[1]))
+            i += 1
+        for f in found:
+            v = (l, s, int(b[l][s:i]))
+            g[f].add((l, s, int(b[l][s:i])))
+            found = set()
+for _, v in g.items():
+    v = list(v)
+    if len(v) == 2:
+        t += v[0][2] * v[1][2]
+print('3b', t)
