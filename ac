@@ -160,3 +160,33 @@ b = 10000000000000000000
 for p in range(int(len(ss)/2)):
     b = min(f(ss[p * 2], ss[p * 2 + 1], 0, 0, b), b)
 print('5b', b)
+
+ll = list(open("6", "r").readlines())
+tt = list(map(int, ll[0].split(':')[1].split()))
+dd = list(map(int, ll[1].split(':')[1].split()))
+
+n = 1
+for i in range(len(tt)):
+    nn = 0
+    for t in range(tt[i]):
+        if t * (tt[i] - t) > dd[i]:
+            nn += 1
+    n *= nn
+print('6a', n)
+
+tt = int(ll[0].split(':')[1].replace(' ', ''))
+dd = int(ll[1].split(':')[1].replace(' ', ''))
+
+def f(low, high):
+    if high >= low:
+        mid = (high + low) // 2
+        if mid * (tt - mid) == dd:
+            return mid
+        elif mid * (tt - mid) > dd:
+            return f(low, mid - 1)
+        else:
+            return f(mid + 1, high)
+    else:
+        return high
+m = f(0, tt)
+print('6b', ((tt // 2) - m) * 2)
