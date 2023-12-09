@@ -249,3 +249,44 @@ t = 0
 for r, x in enumerate(s):
     t += (r + 1) * int(x[1])
 print('7b', t)
+
+ll = list(map(lambda x: x.strip(), open("8", "r").readlines()))
+m = ll[0]
+g = {}
+for l in ll[2:]:
+    g[l[0:3]] = (l[7:10], l[12:15])
+s = 'AAA'
+i = 0
+while s != 'ZZZ':
+    i += 1
+    s = g[s][0 if m[(i - 1) % len(m)] == 'L' else 1]
+print('8a', i)
+
+i = 0
+s = list(filter(lambda x : x[2] == 'A', g.keys()))
+ss = [set() for _ in range(len(s))]
+pp = [[] for _ in range(len(s))]
+nn = [0 for _ in range(len(s))]
+done = set()
+for k, x in enumerate(s):
+    pp[k].append(x)
+while len(done) < len(s) and len(list(filter(lambda x : x[2] != 'Z', s))) != 0:
+    i += 1
+    d = 0 if m[(i - 1) % len(m)] == 'L' else 1
+    s = list(map(lambda x : g[x][d], s))
+    for k, x in enumerate(s):
+        pp[k].append(x)
+    sn = []
+    for k, x in enumerate(s):
+        if not k in done and (x, i % len(m)) in ss[k]:
+            print('cycle', k, i, x, pp[k].index(x), i - pp[k].index(x), len(pp[k]));
+            nn[k] = i - pp[k].index(x)
+            for q, v in enumerate(pp[k]):
+                if v[2] == 'Z':
+                    print(v, q)
+            done.add(k)
+        sn.append(x)
+        ss[k].add((x, i % len(m)))
+    s = sn
+import math
+print('8b', math.lcm(*nn))
