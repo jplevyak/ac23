@@ -303,12 +303,10 @@ print('9a', t)
 t = 0
 for l in map(lambda x: list(map(int, x.strip().split())), open("9", "r").readlines()):
     n = l[0]
-    print(n, l)
     m = 1
     while len(list(filter((0).__ne__, l))) > 0:
         m = -m
         l = [l[i + 1] - l[i] for i in range(len(l) - 1)]
         n += l[0] * m
-        print(n, l)
     t += n
 print('9b', t)
