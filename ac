@@ -376,3 +376,59 @@ for y, dd in enumerate(d):
         elif p % 2 == 1:
             t += 1
 print('10b', t)
+
+mm = list(map(lambda x: x.strip(), open("11", "r").readlines()))
+mmm = []
+e = [True] * len(mm[0])
+for m in mm:
+    if m.find('#') == -1:
+        mmm.append(m)
+    for i, p in enumerate(m):
+        e[i] = e[i] and m[i] == '.'
+    mmm.append(m)
+mm = mmm
+o = 0
+for y, m in enumerate(mm):
+    o = 0
+    for x in range(len(m)):
+        if e[x]:
+            mm[y] = mm[y][:(o+x)] + '.' + mm[y][(o+x):]
+            o += 1
+gg = []
+for y, m in enumerate(mm):
+    for x, p in enumerate(m):
+        if p == '#':
+            gg.append((y, x))
+t = 0
+for y, g in enumerate(gg):
+    for x, h in enumerate(gg[y+1:]):
+        t += abs(g[0] - h[0]) + abs(g[1] - h[1])
+print('11a', t)
+
+mm = list(map(lambda x: x.strip(), open("11", "r").readlines()))
+xx = [True] * len(mm[0])
+yy = [True] * len(mm)
+
+gg = []
+for y, m in enumerate(mm):
+    for x, p in enumerate(m):
+        if p == '#':
+            gg.append((y, x))
+
+for y, m in enumerate(mm):
+    yy[y] = m.find('#') == -1
+    for i, p in enumerate(m):
+        xx[i] = xx[i] and p == '.'
+
+def between(a, b, v):
+    n = 0
+    for i in range(min(a, b), max(a, b)):
+        if v[i]:
+            n += 999999
+    return n
+
+t = 0
+for y, g in enumerate(gg):
+    for x, h in enumerate(gg[y+1:]):
+        t += abs(g[0] - h[0]) + abs(g[1] - h[1]) + between(g[1], h[1], xx) + between(g[0], h[0], yy)
+print('11b', t)
