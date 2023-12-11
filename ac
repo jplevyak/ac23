@@ -279,11 +279,11 @@ while len(done) < len(s) and len(list(filter(lambda x : x[2] != 'Z', s))) != 0:
     sn = []
     for k, x in enumerate(s):
         if not k in done and (x, i % len(m)) in ss[k]:
-            print('cycle', k, i, x, pp[k].index(x), i - pp[k].index(x), len(pp[k]));
+            # print('cycle', k, i, x, pp[k].index(x), i - pp[k].index(x), len(pp[k]));
             nn[k] = i - pp[k].index(x)
-            for q, v in enumerate(pp[k]):
-                if v[2] == 'Z':
-                    print(v, q)
+            #for q, v in enumerate(pp[k]):
+            #    if v[2] == 'Z':
+            #        print(v, q)
             done.add(k)
         sn.append(x)
         ss[k].add((x, i % len(m)))
@@ -310,3 +310,69 @@ for l in map(lambda x: list(map(int, x.strip().split())), open("9", "r").readlin
         n += l[0] * m
     t += n
 print('9b', t)
+
+t = 0
+m = list(map(lambda x: '.' + x.strip() + '.', open("10", "r").readlines()))
+m.insert(0, '.' * len(m[0]))
+m.append('.' * len(m[0]))
+d = [[-1 for _ in range(len(m[0]))] for _ in range(len(m))]
+b = [[None for _ in range(len(m[0]))] for _ in range(len(m))]
+for i in range(1, len(m) - 1):
+    if m[i].find('S') != -1:
+        s = (i, m[i].index('S'))
+        break
+d[s[0]][s[1]] = 0
+w = [s]
+while len(w) > 0:
+    p = w.pop(0)
+    n = d[p[0]][p[1]] + 1
+    if   (d[p[0]-1][p[1]] == -1 or d[p[0]-1][p[1]] > n) and (m[p[0]][p[1]] == 'S' or m[p[0]][p[1]] == '|' or m[p[0]][p[1]] == 'J' or m[p[0]][p[1]] == 'L') and (m[p[0]-1][p[1]] == '|' or m[p[0]-1][p[1]] == '7' or m[p[0]-1][p[1]] == 'F'):
+        d[p[0]-1][p[1]] = n
+        b[p[0]-1][p[1]] = (p[0], p[1])
+        w.append((p[0]-1, p[1]))
+    if (d[p[0]+1][p[1]] == -1 or d[p[0]+1][p[1]] > n) and (m[p[0]][p[1]] == 'S' or m[p[0]][p[1]] == '|' or m[p[0]][p[1]] == 'F' or m[p[0]][p[1]] == '7') and (m[p[0]+1][p[1]] == '|' or m[p[0]+1][p[1]] == 'J' or m[p[0]+1][p[1]] == 'L'):
+        d[p[0]+1][p[1]] = n
+        b[p[0]+1][p[1]] = (p[0], p[1])
+        w.append((p[0]+1, p[1]))
+    if (d[p[0]][p[1]-1] == -1 or d[p[0]][p[1]-1] > n) and (m[p[0]][p[1]] == 'S' or m[p[0]][p[1]] == '-' or m[p[0]][p[1]] == 'J' or m[p[0]][p[1]] == '7') and (m[p[0]][p[1]-1] == '-' or m[p[0]][p[1]-1] == 'L' or m[p[0]][p[1]-1] == 'F'):
+        d[p[0]][p[1]-1] = n
+        b[p[0]][p[1]-1] = (p[0], p[1])
+        w.append((p[0], p[1]-1))
+    if (d[p[0]][p[1]+1] == -1 or d[p[0]][p[1]+1] > n) and (m[p[0]][p[1]] == 'S' or m[p[0]][p[1]] == '-' or m[p[0]][p[1]] == 'F' or m[p[0]][p[1]] == 'L') and (m[p[0]][p[1]+1] == '-' or m[p[0]][p[1]+1] == 'J' or m[p[0]][p[1]+1] == '7'):
+        d[p[0]][p[1]+1] = n
+        b[p[0]][p[1]+1] = (p[0], p[1])
+        w.append((p[0], p[1]+1))
+t = 0
+for y in d:
+  t = max(t, *y)
+print('10a', t)
+
+o = (0, 0)
+for y, dd in enumerate(d):
+    f = dd.index(t) if t in dd else -1
+    if f != -1:
+        o = (y, f)
+        break
+x = o
+path = set()
+path.add(s)
+while not x in path:
+    path.add(x)
+    x = b[x[0]][x[1]]
+for y, x in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+    if (o[0]+y, o[1]+x) not in path and d[o[0]+y][o[1]+x] == t - 1:
+        x = (o[0]+y, o[1]+x)
+        while not x in path:
+            path.add(x)
+            x = b[x[0]][x[1]]
+        break
+t = 0
+for y, dd in enumerate(d):
+    p = 0
+    for x in range(len(dd)):
+        if (y, x) in path:
+            if m[y][x] == '|' or m[y][x] == 'L' or m[y][x] == 'J':
+              p += 1
+        elif p % 2 == 1:
+            t += 1
+print('10b', t)
