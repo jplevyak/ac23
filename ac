@@ -432,3 +432,42 @@ for y, g in enumerate(gg):
     for x, h in enumerate(gg[y+1:]):
         t += abs(g[0] - h[0]) + abs(g[1] - h[1]) + between(g[1], h[1], xx) + between(g[0], h[0], yy)
 print('11b', t)
+
+from functools import cache
+mm = list(map(lambda x: x.strip(), open("12", "r").readlines()))
+
+@cache
+def f(m, i, l):
+    while i < len(m) and m[i] == '.':
+        i += 1
+    if i >= len(m):
+        return 1 if len(l) == 0 else 0
+    if len(l) == 0:
+        while i < len(m) and m[i] != '#':
+            i += 1
+        return 1 if i >= len(m) else 0
+    v = 0
+    if m[i] == '?':
+        v += f('.' + m[i+1:], 0, l) 
+    p = i
+    while i < len(m) and m[i] != '.' and i - p != l[0]:
+        i += 1
+    if i - p == l[0] and (i >= len(m) or m[i] != '#'):
+        v += f('.' + m[i+1:], 0, l[1:])
+    return v
+
+t = 0
+for m in mm:
+    x, y = m.strip().split()
+    l = list(map(int, y.split(',')))
+    t += f(x, 0, tuple(l))
+print('12a', t)
+
+t = 0
+for m in mm:
+    x, y = m.strip().split()
+    l = list(map(int, y.split(',')))
+    ll = [x for _ in range(5) for x in l]
+    xx = x + '?' + x + '?' + x + '?' + x + '?' + x
+    t += f(xx, 0, tuple(ll))
+print('12a', t)
