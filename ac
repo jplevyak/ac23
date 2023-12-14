@@ -467,3 +467,40 @@ for m in mm:
     xx = x + '?' + x + '?' + x + '?' + x + '?' + x
     t += f(xx, 0, tuple(ll))
 print('12b', t)
+
+mm = list(map(lambda x: x.strip(), open("0", "r").readlines()))
+f = []
+mm.append('')
+t = 0
+for m in mm:
+    if len(m) != 0:
+        f.append(m)
+        continue
+    c = [1] * (len(f[0]) - 1)
+    c2 = [0] * (len(f[0]) - 1)
+    #c2 = [(i + 1) * len(f) if i < (len(f[0]) // 2) else (len(f[0]) - i - 1) * len(f) for i in range(len(f[0]) - 1)]
+    for y in range(len(f)):
+        for a in range(len(f[0])):
+            for b in range(a + 1, len(f[0]), 2):
+                if f[y][a] != f[y][b] and c[a + ((b - a) // 2)] == 1:
+                    c[a + (b - a) // 2] = 0
+                if f[y][a] != f[y][b]:
+                    c2[a + ((b - a) // 2)] += 1
+    r = [1] * (len(f) - 1)
+    r2 = [0] * (len(f) - 1)
+    #r2 = [(i + 1) * len(f[0]) if i < (len(f) // 2) else (len(f) - i - 1) * len(f[0]) for i in range(len(f) - 1)]
+    for x in range(len(f[0])):
+        for a in range(len(f)):
+            for b in range(a + 1, len(f), 2):
+                if f[a][x] != f[b][x] and r[a + ((b - a) // 2)] == 1:
+                    r[a + (b - a) // 2] = 0
+                if f[a][x] != f[b][x]:
+                    r2[a + (b - a) // 2] += 1
+    print('c2', c2)
+    print('r2', r2)
+    if sum(c) == 1:
+        t += c.index(1) + 1
+    if sum(r) == 1:
+        t += 100 * (r.index(1) + 1)
+    f = []
+print('13a', t)
