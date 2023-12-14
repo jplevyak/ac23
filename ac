@@ -500,3 +500,21 @@ for m in mm:
     f = []
 print('13a', t)
 print('13b', t2)
+
+mm = list(map(lambda x: x.strip(), open("14", "r").readlines()))
+for y in range(len(mm)):
+    if y == 0:
+        continue
+    for x in range(len(mm[y])):
+        yy = y
+        while yy > 0 and mm[yy-1][x] == '.' and mm[yy][x] == 'O':
+            mm[yy] = mm[yy][:x] + '.' + mm[yy][x+1:]
+            mm[yy-1] = mm[yy-1][:x] + 'O' + mm[yy-1][x+1:]
+            yy -= 1
+t = 0
+for y in range(len(mm)):
+    for x in range(len(mm[y])):
+        if mm[y][x] == 'O':
+            t += len(mm) - y
+print('14a', t)
+
