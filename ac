@@ -495,10 +495,8 @@ for m in mm:
             for b in range(a + 1, len(f), 2):
                 if f[a][x] != f[b][x]:
                     r[a + (b - a) // 2] += 1
-    t += cindex(c, 0, 1)
-    t += cindex(r, 0, 100)
-    t2 += cindex(c, 1, 1)
-    t2 += cindex(r, 1, 100)
+    t += cindex(c, 0, 1) + cindex(r, 0, 100)
+    t2 += cindex(c, 1, 1) +cindex(r, 1, 100)
     f = []
 print('13a', t)
 print('13b', t2)
