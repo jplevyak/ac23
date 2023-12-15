@@ -541,7 +541,7 @@ def c(mm):
 mm = open("14", "r").read().strip('\n')
 print('14a', c(f(mm, 0)))
 s = {}
-for i in range(1000 * 4):
+for i in range(1000000 * 4):
     if i % 4 == 3:
         if mm in s:
             if (4000000 - i) % (i - s[mm]) == 0:
