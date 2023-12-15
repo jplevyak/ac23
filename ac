@@ -501,6 +501,7 @@ for m in mm:
 print('13a', t)
 print('13b', t2)
 
+@cache
 def f(m, d):
     if d % 2 == 0:
         m = [list(l) for l in m.split('\n')]
