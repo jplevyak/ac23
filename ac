@@ -501,20 +501,52 @@ for m in mm:
 print('13a', t)
 print('13b', t2)
 
-mm = list(map(lambda x: x.strip(), open("14", "r").readlines()))
-for y in range(len(mm)):
-    if y == 0:
-        continue
-    for x in range(len(mm[y])):
-        yy = y
-        while yy > 0 and mm[yy-1][x] == '.' and mm[yy][x] == 'O':
-            mm[yy] = mm[yy][:x] + '.' + mm[yy][x+1:]
-            mm[yy-1] = mm[yy-1][:x] + 'O' + mm[yy-1][x+1:]
-            yy -= 1
-t = 0
-for y in range(len(mm)):
-    for x in range(len(mm[y])):
-        if mm[y][x] == 'O':
-            t += len(mm) - y
-print('14a', t)
+def f(m, d):
+    if d % 2 == 0:
+        m = [list(l) for l in m.split('\n')]
+    else:
+        m = [l for l in m.split('\n')]
+        m = [[l[i] for l in m] for i in range(len(m[0]))]
+    r = ((d % 4 > 1))
+    o = -1 if r else 1
+    if (d % 4 < 2):
+        for y in range(1, len(m)):
+            for x in range(len(m[y])):
+                yy = y
+                while yy > 0 and m[yy-1][x] == '.' and m[yy][x] == 'O':
+                    m[yy][x] = '.'
+                    m[yy-1][x] = 'O'
+                    yy -= 1
+    else:
+        for y in range(len(m) - 2, -1, -1):
+            for x in range(len(m[y])):
+                yy = y
+                while yy < len(m) - 1 and m[yy+1][x] == '.' and m[yy][x] == 'O':
+                    m[yy][x] = '.'
+                    m[yy+1][x] = 'O'
+                    yy += 1
+    if d % 2 == 0:
+        return '\n'.join([''.join(l) for l in m])
+    else:
+        return '\n'.join([''.join([m[y][x] for y in range(len(m))]) for x in range(len(m[0]))])
 
+def c(mm):
+    t = 0
+    m = [list(l) for l in mm.split('\n')]
+    for y in range(len(m)):
+        for x in range(len(m[y])):
+            if m[y][x] == 'O':
+                t += len(m) - y
+    return t
+
+mm = open("14", "r").read().strip('\n')
+print('14a', c(f(mm, 0)))
+s = {}
+for i in range(1000 * 4):
+    if i % 4 == 3:
+        if mm in s:
+            if (4000000 - i) % (i - s[mm]) == 0:
+                break
+        s[mm] = i
+    mm = f(mm, i % 4)
+print('14b', c(mm))
