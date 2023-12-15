@@ -549,3 +549,38 @@ for i in range(1000000 * 4):
         s[mm] = i
     mm = f(mm, i % 4)
 print('14b', c(mm))
+
+mm = open("15", "r").read().strip()
+mm = mm.split(',')
+t = 0
+for m in mm:
+    tt = 0
+    for c in m:
+        tt = (((tt + ord(c))) * 17) % 256
+    t += tt
+print('15a', t)
+
+bb = [[] for _ in range(256)]
+for m in mm:
+    tt = 0
+    for i, c in enumerate(m):
+        if c == '-' or c == '=':
+            break
+        tt = (((tt + ord(c))) * 17) % 256
+    if c == '-':
+        bb[tt] = list(filter(lambda x: x[0] != m[:i], bb[tt]))
+    else:
+        found = False
+        for x in bb[tt]:
+            if x[0] == m[:i]:
+                x[1] = int(m[i+1:])
+                found = True
+                break
+        if not found:
+            bb[tt].append([m[:i], int(m[i+1:])])
+
+t = 0
+for bi, b in enumerate(bb):
+    for li, l in enumerate(b):
+        t += (bi + 1) * (li + 1) * l[1]
+print('15b', t)
