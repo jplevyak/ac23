@@ -584,3 +584,49 @@ for bi, b in enumerate(bb):
     for li, l in enumerate(b):
         t += (bi + 1) * (li + 1) * l[1]
 print('15b', t)
+
+mm = list(map(lambda x: x.strip(), open("16", "r").readlines()))
+
+def f(ww):
+  d = set()
+  while len(ww) > 0:
+      w = ww.pop()
+      if w[0] < 0 or w[0] >= len(mm[0]) or w[1] < 0 or w[1] >= len(mm):
+          continue
+      if w in d:
+          continue
+      d.add(w)
+      c = mm[w[1]][w[0]]
+      if w[2] % 2 == 0: # verdical
+          if c == '.' or c == '|':
+              ww.append((w[0], w[1] + (-1 if w[2] == 0 else 1), w[2]))
+          elif c == '-':
+              ww.append((w[0] - 1, w[1], 3))
+              ww.append((w[0] + 1, w[1], 1))
+          elif (c == '/' and w[2] == 0) or (c == '\\' and w[2] == 2):
+              ww.append((w[0] + 1, w[1], 1))
+          else:
+              ww.append((w[0] - 1, w[1], 3))
+      else:             # horizontal
+          if c == '.' or c == '-':
+              ww.append((w[0] + (1 if w[2] == 1 else -1), w[1], w[2]))
+          elif c == '|':
+              ww.append((w[0], w[1] - 1, 0))
+              ww.append((w[0], w[1] + 1, 2))
+          elif (c == '/' and w[2] == 1) or (c == '\\' and w[2] == 3):
+              ww.append((w[0], w[1] - 1, 0))
+          else:
+              ww.append((w[0], w[1] + 1, 2))
+  dd = set()
+  for x in d:
+      dd.add((x[0], x[1]))
+  return len(list(dd))
+
+print('16a', f([(0, 0, 1)]))
+
+t = 0
+for l in range(len(mm)):
+    t = max(t, f([(0, l, 1)]), f([(len(mm[0]) - 1, l, 3)]))
+for l in range(len(mm[0])):
+    t = max(t, f([(l, 0, 2)]), f([(l, len(mm) - 1, 0)]))
+print('16b', t)
