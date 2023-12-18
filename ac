@@ -630,3 +630,6 @@ for l in range(len(mm)):
 for l in range(len(mm[0])):
     t = max(t, f([(l, 0, 2)]), f([(l, len(mm) - 1, 0)]))
 print('16b', t)
+
+for l in map(lambda x: list(map(int, list(x.strip()))), open("0", "r").readlines()):
+    print(l)
