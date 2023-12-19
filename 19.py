@@ -1,9 +1,10 @@
 #!/usr/bin/python3
 import math
+from copy import deepcopy
 
 r = {}
 
-ll = list(map(lambda x: x.strip(), open("0", "r").readlines()))
+ll = list(map(lambda x: x.strip(), open("19", "r").readlines()))
 ill = 0
 I = {'x': '0', 'm': '1', 'a': '2', 's': '3'}
 a = []
@@ -42,7 +43,6 @@ while ill < len(ll):
 
 print("19a", sum(map(sum, a)))
 
-M = 1000000
 F = {}
 ill = 0
 while len(ll[ill]) > 0:
@@ -54,38 +54,39 @@ while len(ll[ill]) > 0:
         if o is not None:
             (n, b) = v.split(o)
             c, f = b.split(":")
-            if f == 'A':
-                print(v, b, f)
+            #if f == 'A':
+            #    print(v, b, f)
             F[name].append((f, int(I[n]), int(c) if o == ">" else None, int(c) if o == "<" else None))
         else:
             F[name].append((v, None, None, None))
     ill += 1
 
+M = 4001
 S = [[0,  M], [0,  M], [0,  M], [0,  M]]
 
 def g(x, n):
-    print(n, x)
+    #print(n, x)
     if n == "A":
+        #print(x, math.prod([x[i][1] - x[i][0] - 1 for i in range(4)]))
         return math.prod([x[i][1] - x[i][0] - 1 for i in range(4)])
     if n == "R":
         return 0
     f = F[n]
     t = 0
     for (n, v, l, h) in f:
-        print(n, v, l, h)
+        #print(n, v, l, h)
         if v == None:
-            t += g(x, n)
+            t += g(deepcopy(x), n)
         elif l != None:
-            y = x.copy()
+            y = deepcopy(x)
             y[v][0] = max(y[v][0], l)
             t += g(y, n)
-            x[v][1] = min(y[v][1], l - 1)
+            x[v][1] = min(x[v][1], l + 1)
         else:
-            y = x.copy()
+            y = deepcopy(x)
             y[v][1] = min(y[v][1], h)
-            print('h', v, h, y)
             t += g(y, n)
-            x[v][0] = max(y[v][0], h + 1)
+            x[v][0] = max(x[v][0], h - 1)
     return t
 
 print("19a", g(S, "in"))
