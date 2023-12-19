@@ -65,3 +65,5 @@ def f(mm):
     return t
 
 print("18a", f(list([(m[0], int(m[1])) for m in mm])))
+DD = { 0: 'R', 1: 'D', 2: 'L', 3: 'U' }
+print("18b", f(list([(DD[int(m[2][7])], int(m[2][2:7], 16)) for m in mm])))
