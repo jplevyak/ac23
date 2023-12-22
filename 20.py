@@ -44,6 +44,7 @@ h = 0
 c = 0
 ww.append(('broadcaster', 0, False, 'button'))
 l += 1
+fact = [0, 0, 0, 0]
 while (iw < len(ww)):
     w = ww[iw]
     a = nn[w[0]]
@@ -68,6 +69,11 @@ while (iw < len(ww)):
     else: # &
         v = True
         sa[0][w[1]] = w[2]
+        if w[0] == 'xn' and w[2]:
+            print(w, c)
+            fact[w[1]] = c + 1
+            if math.prod(fact) > 0:
+                break
         for s in sa[0]:
             #print('&1', v, s)
             v = v and s
@@ -91,9 +97,9 @@ while (iw < len(ww)):
                 state.append(0 if ss[k][-1] else 1)
         #print(state)
         state = state.decode("utf-8")
-        if c == 999:
-            c = 1000
-            break
+        #if c == 999:
+        #    c = 1000
+        #    break
         #if state in done:
         #    print(done)
         #    print(done[state])
@@ -106,6 +112,8 @@ while (iw < len(ww)):
         l += 1
         c += 1
 
-for w in ww:
-    print(w[3], '-low->' if not w[2] else '-high->', w[0])
+#for w in ww:
+#    print(w[3], '-low->' if not w[2] else '-high->', w[0])
+print(c, l, h)
+print(math.lcm(*fact))
 print("20a", l, h, c, 1000 // c, l * (1000 // c), h * (1000 // c), (l * (1000 // c)) * (h * (1000 // c)))
